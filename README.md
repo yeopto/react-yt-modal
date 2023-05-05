@@ -146,4 +146,4 @@ const Caption = styled.p`
 
 ## Version
 
-- 0.0.2 (latest)
+- 0.0.3 (latest)
