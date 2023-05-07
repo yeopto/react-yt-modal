@@ -21,11 +21,12 @@ yarn add react-yt-modal
 ### isOpen
 
 - A status value of type boolean indicating whether the modal is open or closed.
+- This modal library displays the modal when isOpen is true, and does not display it when it is false
 
 ### closeModal
 
 - A custom function that closes the modal.
-- Should contain the logic to change `isOpen` to `false`.
+- To close the modal in this modal library, isOpen needs to be set to false since the modal is displayed when isOpen is true. So, Should contain the logic to change `isOpen` to `false` in this function.
 
 ### portalNode
 
@@ -45,7 +46,7 @@ import Modal from "react-yt-modal";
 <Modal
   isOpen={/* Modal State */}
   closeModal={/* Close Modal Function */}
-  portaNode={/* DOM node(optional) */}
+  portalNode={/* DOM node(optional) */}
 >
   {/* Modal Contents(ReactNode) */}
 </Modal>
@@ -146,4 +147,4 @@ const Caption = styled.p`
 
 ## Version
 
-- 0.0.3 (latest)
+- 0.0.4 (latest)
