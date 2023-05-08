@@ -14,25 +14,41 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 import { jsx as _jsx } from "react/jsx-runtime";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
+import { usePrevious } from "./hooks/usePrevious";
 var BackDrop = styled.div(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n\n  background: rgba(0, 0, 0, 0.35);\n"], ["\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n\n  background: rgba(0, 0, 0, 0.35);\n"])));
 var Container = styled.div(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n  position: fixed;\n  bottom: 0;\n  width: 100%;\n\n  border-radius: 8px 8px 0 0;\n  background: #ffffff;\n"], ["\n  position: fixed;\n  bottom: 0;\n  width: 100%;\n\n  border-radius: 8px 8px 0 0;\n  background: #ffffff;\n"])));
 var Modal = function (props) {
     var isOpen = props.isOpen, closeModal = props.closeModal, children = props.children, portalNode = props.portalNode;
+    var prevIsOpen = usePrevious(isOpen);
+    var _a = useState(false), justCalledCloseModal = _a[0], setJustCalledCloseModal = _a[1];
+    var handleCloseModal = function () {
+        closeModal();
+        setJustCalledCloseModal(true);
+    };
     var handleKeyDown = function (event) {
         if (event.key === "Escape") {
-            closeModal();
+            handleCloseModal();
         }
     };
+    useEffect(function () {
+        if (!justCalledCloseModal) {
+            return;
+        }
+        setJustCalledCloseModal(false);
+        if (prevIsOpen === isOpen) {
+            throw new Error("Should contain the logic to change isOpen to false. isOpen did not change.");
+        }
+    }, [justCalledCloseModal]);
     useEffect(function () {
         document.addEventListener("keydown", handleKeyDown);
         return function () {
             document.removeEventListener("keydown", handleKeyDown);
         };
     });
-    var ModalContent = (_jsx(BackDrop, __assign({ onClick: closeModal }, { children: _jsx(Container, { children: children }) })));
+    var ModalContent = (_jsx(BackDrop, __assign({ onClick: handleCloseModal }, { children: _jsx(Container, { children: children }) })));
     if (!isOpen)
         return null;
     if (portalNode)
