@@ -1,7 +1,8 @@
 import type { PropsWithChildren } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
+import { usePrevious } from "./hooks/usePrevious";
 
 const BackDrop = styled.div`
   position: fixed;
@@ -31,11 +32,31 @@ type ModalProps = {
 const Modal = (props: PropsWithChildren<ModalProps>) => {
   const { isOpen, closeModal, children, portalNode } = props;
 
+  const prevIsOpen = usePrevious<boolean>(isOpen);
+  const [justCalledCloseModal, setJustCalledCloseModal] = useState(false);
+
+  const handleCloseModal = () => {
+    closeModal();
+    setJustCalledCloseModal(true);
+  };
+
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Escape") {
-      closeModal();
+      handleCloseModal();
     }
   };
+
+  useEffect(() => {
+    if (!justCalledCloseModal) {
+      return;
+    }
+    setJustCalledCloseModal(false);
+    if (prevIsOpen === isOpen) {
+      throw new Error(
+        "Should contain the logic to change isOpen to false. isOpen did not change."
+      );
+    }
+  }, [justCalledCloseModal]);
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
@@ -46,7 +67,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
   });
 
   const ModalContent = (
-    <BackDrop onClick={closeModal}>
+    <BackDrop onClick={handleCloseModal}>
       <Container>{children}</Container>
     </BackDrop>
   );
